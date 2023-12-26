@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Hotel {
@@ -13,4 +13,7 @@ export class Hotel {
 
   @Column('int')
   stars: number;
+
+  @DeleteDateColumn({ default: null })
+  deletedAt: Date;
 }

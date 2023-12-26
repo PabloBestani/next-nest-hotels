@@ -21,19 +21,19 @@ export class HotelsService {
     return await this.hotelRepository.save(newHotel);
   }
 
-  findAll() {
-    return `This action returns all hotels`;
+  async findAll() {
+    return await this.hotelRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} hotel`;
+  async findOne(id: string) {
+    return await this.hotelRepository.findOneBy({ id });
   }
 
-  update(id: number, updateHotelDto: UpdateHotelDto) {
-    return `This action updates a #${id} hotel`;
+  update(id: string, updateHotelDto: UpdateHotelDto) {
+    return this.hotelRepository.update(id, updateHotelDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} hotel`;
+  remove(id: string) {
+    return this.hotelRepository.softDelete(id);
   }
 }
