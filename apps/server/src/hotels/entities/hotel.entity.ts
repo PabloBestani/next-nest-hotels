@@ -1,5 +1,6 @@
-import { Column, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
+@Entity()
 export class Hotel {
   @PrimaryColumn()
   id: string;
@@ -10,6 +11,6 @@ export class Hotel {
   @Column()
   location: string;
 
-  @Column()
+  @Column('int')
   stars: number;
 }
