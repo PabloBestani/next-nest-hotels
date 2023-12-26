@@ -1,0 +1,4 @@
+packages:
+# los directorios dentro de apps se van a incluir en el workspace
+# asi van a compartir las dependencias que tengan en comun
+- 'apps/*'
