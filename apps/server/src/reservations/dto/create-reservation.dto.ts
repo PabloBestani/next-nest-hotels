@@ -1,7 +1,15 @@
-import { IsDateString, IsDecimal } from 'class-validator';
+import {
+  IsDateString,
+  IsDecimal,
+  IsEmail,
+  IsInt,
+  IsPositive,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateReservationDto {
   @IsDecimal({ force_decimal: true, decimal_digits: '2' })
+  @IsPositive()
   totalPrice: string;
 
   @IsDateString()
@@ -9,4 +17,14 @@ export class CreateReservationDto {
 
   @IsDateString()
   checkOutDate: Date;
+
+  @IsEmail()
+  userEmail: string;
+
+  @IsUUID(4)
+  hotelId: string;
+
+  @IsInt()
+  @IsPositive()
+  roomTypeId: number;
 }

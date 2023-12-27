@@ -1,4 +1,14 @@
-import { Column, DeleteDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import { Reservation } from 'src/reservations/entities/reservation.entity';
+import { RoomType } from 'src/room-type/entities/room-type.entity';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 
 @Entity()
 export class Hotel {
@@ -16,4 +26,11 @@ export class Hotel {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.id)
+  reservations: Reservation[];
+
+  @ManyToMany(() => RoomType)
+  @JoinTable()
+  roomTypes: RoomType[];
 }

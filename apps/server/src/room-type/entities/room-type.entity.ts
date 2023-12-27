@@ -1,7 +1,9 @@
+import { Reservation } from 'src/reservations/entities/reservation.entity';
 import {
   Column,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -21,4 +23,7 @@ export class RoomType {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.id)
+  reservations: Reservation[];
 }

@@ -1,5 +1,12 @@
 import { Role } from 'src/common/enums/role.enum';
-import { Column, DeleteDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import { Reservation } from 'src/reservations/entities/reservation.entity';
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -20,4 +27,7 @@ export class User {
 
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.id)
+  reservations: Reservation[];
 }

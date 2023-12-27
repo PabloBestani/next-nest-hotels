@@ -1,4 +1,11 @@
-import { IsEmail, IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Length,
+} from 'class-validator';
 import { Role } from 'src/common/enums/role.enum';
 
 export class CreateUserDto {
@@ -15,4 +22,8 @@ export class CreateUserDto {
   @IsEnum(Role)
   @IsOptional()
   role: Role;
+
+  @IsOptional()
+  @IsUUID(4, { each: true })
+  reservationIds: string[];
 }
