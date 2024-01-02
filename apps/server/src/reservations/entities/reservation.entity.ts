@@ -12,7 +12,7 @@ import {
 
 @Entity()
 export class Reservation {
-  @PrimaryColumn()
+  @PrimaryColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'decimal', precision: 10, scale: 2 })

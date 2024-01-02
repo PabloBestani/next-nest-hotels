@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -63,7 +63,41 @@ export class ReservationsService {
   }
 
   async update(id: string, updateReservationDto: UpdateReservationDto) {
-    return this.reservationsRepository.update(id, updateReservationDto);
+    const reservation = await this.reservationsRepository.findOneBy({ id });
+
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+
+    const {
+      hotelId,
+      roomTypeId,
+      userEmail,
+      checkInDate,
+      checkOutDate,
+      totalPrice,
+    } = updateReservationDto;
+
+    if (hotelId) {
+      const hotel = await this.hotelsService.findOne(hotelId);
+      if (hotel) {
+        reservation.hotel = hotel;
+      }
+    }
+
+    if (roomTypeId) {
+      const roomType = await this.roomTypeService.findOne(roomTypeId);
+      if (roomType) {
+        reservation.roomType = roomType;
+      }
+    }
+
+    if (userEmail) reservation.userEmail = userEmail;
+    if (checkInDate) reservation.checkInDate = checkInDate;
+    if (checkOutDate) reservation.checkOutDate = checkOutDate;
+    if (totalPrice) reservation.totalPrice = totalPrice;
+
+    return await this.reservationsRepository.save(reservation);
   }
 
   async remove(id: string) {
