@@ -50,7 +50,17 @@ export class RoomTypeService {
     const roomType = await this.roomTypesRepository.findOneBy({ id });
     if (!roomType) throw new NotFoundException('Room type not found');
 
-    const { hotelId, type, description, cost } = updateRoomTypeDto;
+    await this.updateRoomType(roomType, updateRoomTypeDto);
+
+    return this.roomTypesRepository.save(roomType);
+  }
+
+  async remove(id: number) {
+    return this.roomTypesRepository.softDelete(id);
+  }
+
+  private async updateRoomType(roomType: RoomType, dto: UpdateRoomTypeDto) {
+    const { hotelId, type, description, cost } = dto;
 
     if (hotelId) {
       const hotel = await this.hotelsService.findOne(hotelId);
@@ -61,11 +71,5 @@ export class RoomTypeService {
     if (type) roomType.type = type;
     if (description) roomType.description = description;
     if (cost) roomType.cost = cost;
-
-    return await this.roomTypesRepository.save(roomType);
-  }
-
-  async remove(id: number) {
-    return this.roomTypesRepository.softDelete(id);
   }
 }
