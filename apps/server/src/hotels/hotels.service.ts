@@ -4,13 +4,13 @@ import { UpdateHotelDto } from './dto/update-hotel.dto';
 import { v4 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Hotel } from './entities/hotel.entity';
-import { Repository } from 'typeorm';
+import { HotelRepository } from './hotels.repository';
 
 @Injectable()
 export class HotelsService {
   constructor(
     @InjectRepository(Hotel)
-    private readonly hotelRepository: Repository<Hotel>,
+    private readonly hotelRepository: HotelRepository,
   ) {}
 
   async create(createHotelDto: CreateHotelDto) {
@@ -37,10 +37,7 @@ export class HotelsService {
   }
 
   async findOneByIdWithReservations(id: string) {
-    return await this.hotelRepository.findOne({
-      where: { id },
-      relations: ['reservations'],
-    });
+    return await this.hotelRepository.findOneWithReservationsAndUserEmail(id);
   }
 
   update(id: string, updateHotelDto: UpdateHotelDto) {
