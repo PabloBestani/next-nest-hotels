@@ -68,7 +68,16 @@ export class ReservationsService {
     if (!reservation) {
       throw new NotFoundException('Reservation not found');
     }
+    await this.updateReservation(reservation, updateReservationDto);
 
+    return await this.reservationsRepository.save(reservation);
+  }
+
+  async remove(id: string) {
+    return this.reservationsRepository.softDelete(id);
+  }
+
+  async updateReservation(reservation: Reservation, dto: UpdateReservationDto) {
     const {
       hotelId,
       roomTypeId,
@@ -76,7 +85,7 @@ export class ReservationsService {
       checkInDate,
       checkOutDate,
       totalPrice,
-    } = updateReservationDto;
+    } = dto;
 
     if (hotelId) {
       const hotel = await this.hotelsService.findOne(hotelId);
@@ -96,11 +105,5 @@ export class ReservationsService {
     if (checkInDate) reservation.checkInDate = checkInDate;
     if (checkOutDate) reservation.checkOutDate = checkOutDate;
     if (totalPrice) reservation.totalPrice = totalPrice;
-
-    return await this.reservationsRepository.save(reservation);
-  }
-
-  async remove(id: string) {
-    return this.reservationsRepository.softDelete(id);
   }
 }
