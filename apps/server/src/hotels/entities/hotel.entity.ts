@@ -25,9 +25,9 @@ export class Hotel {
   @DeleteDateColumn({ default: null })
   deletedAt: Date;
 
-  @OneToMany(() => Reservation, (reservation) => reservation.id)
+  @OneToMany(() => Reservation, (reservation) => reservation.hotel)
   reservations: Reservation[];
 
-  @OneToMany(() => RoomType, (roomType) => roomType.id)
+  @OneToMany(() => RoomType, (roomType) => roomType.hotel)
   roomTypes: RoomType[];
 }
