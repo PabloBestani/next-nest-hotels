@@ -31,6 +31,16 @@ export class Hotel {
   reservations: Reservation[];
 
   @ManyToMany(() => RoomType)
-  @JoinTable()
+  @JoinTable({
+    name: 'hotels-roomtypes',
+    joinColumn: {
+      name: 'roomType',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'hotel',
+      referencedColumnName: 'id',
+    },
+  })
   roomTypes: RoomType[];
 }
