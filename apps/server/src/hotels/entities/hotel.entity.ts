@@ -30,17 +30,6 @@ export class Hotel {
   @OneToMany(() => Reservation, (reservation) => reservation.id)
   reservations: Reservation[];
 
-  @ManyToMany(() => RoomType)
-  @JoinTable({
-    name: 'hotels-roomtypes',
-    joinColumn: {
-      name: 'roomType',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'hotel',
-      referencedColumnName: 'id',
-    },
-  })
+  @OneToMany(() => RoomType, (roomType) => roomType.id)
   roomTypes: RoomType[];
 }

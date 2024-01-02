@@ -1,7 +1,5 @@
 import {
   IsDecimal,
-  IsOptional,
-  IsPositive,
   IsString,
   IsUUID,
   Length,
@@ -18,14 +16,9 @@ export class CreateRoomTypeDto {
   description: string;
 
   @IsDecimal({ force_decimal: true, decimal_digits: '2' })
-  @IsPositive()
+  // @IsPositive()
   cost: string;
 
-  @IsOptional()
-  @IsUUID(4, { each: true })
-  hotelIds: string[];
-
-  @IsOptional()
-  @IsUUID(4, { each: true })
-  reservationIds: string[];
+  @IsUUID(4)
+  hotelId: string;
 }

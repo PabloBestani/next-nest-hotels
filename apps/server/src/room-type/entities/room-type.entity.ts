@@ -1,8 +1,10 @@
+import { Hotel } from 'src/hotels/entities/hotel.entity';
 import { Reservation } from 'src/reservations/entities/reservation.entity';
 import {
   Column,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -26,4 +28,7 @@ export class RoomType {
 
   @OneToMany(() => Reservation, (reservation) => reservation.id)
   reservations: Reservation[];
+
+  @ManyToOne(() => Hotel, (hotel) => hotel.id)
+  hotel: Hotel;
 }
