@@ -27,7 +27,7 @@ export class ReservationsService {
     hotelId,
   }: CreateReservationDto) {
     try {
-      const hotel = await this.hotelsService.findOne(hotelId);
+      const hotel = await this.hotelsService.findOneById(hotelId);
       const roomType = await this.roomTypeService.findOne(roomTypeId);
 
       if (!hotel || !roomType) {
@@ -88,7 +88,7 @@ export class ReservationsService {
     } = dto;
 
     if (hotelId) {
-      const hotel = await this.hotelsService.findOne(hotelId);
+      const hotel = await this.hotelsService.findOneById(hotelId);
       if (hotel) {
         reservation.hotel = hotel;
       }

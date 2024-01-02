@@ -17,7 +17,9 @@ export class RoomTypeService {
 
   async create(createRoomTypeDto: CreateRoomTypeDto) {
     try {
-      const hotel = await this.hotelsService.findOne(createRoomTypeDto.hotelId);
+      const hotel = await this.hotelsService.findOneById(
+        createRoomTypeDto.hotelId,
+      );
 
       if (!hotel) throw new NotFoundException('Hotel not found');
 
@@ -63,7 +65,7 @@ export class RoomTypeService {
     const { hotelId, type, description, cost } = dto;
 
     if (hotelId) {
-      const hotel = await this.hotelsService.findOne(hotelId);
+      const hotel = await this.hotelsService.findOneById(hotelId);
       if (!hotel) throw new NotFoundException('Hotel not found');
       roomType.hotel = hotel;
     }
