@@ -9,7 +9,6 @@ import {
 
 export class CreateReservationDto {
   @IsDecimal({ force_decimal: true, decimal_digits: '2' })
-  @IsPositive()
   totalPrice: string;
 
   @IsDateString()
