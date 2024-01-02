@@ -30,6 +30,16 @@ export class HotelsController {
     return this.hotelsService.findOneById(id);
   }
 
+  @Get(':id/room-types')
+  findOneWithRoomTypes(@Param('id') id: string) {
+    return this.hotelsService.findOneByIdWithRoomTypes(id);
+  }
+
+  @Get(':id/reservations')
+  findOneWithReservations(@Param('id') id: string) {
+    return this.hotelsService.findOneByIdWithReservations(id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateHotelDto: UpdateHotelDto) {
     return this.hotelsService.update(id, updateHotelDto);

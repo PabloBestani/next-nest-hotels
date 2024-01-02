@@ -29,6 +29,20 @@ export class HotelsService {
     return await this.hotelRepository.findOneBy({ id });
   }
 
+  async findOneByIdWithRoomTypes(id: string) {
+    return await this.hotelRepository.findOne({
+      where: { id },
+      relations: ['roomTypes'],
+    });
+  }
+
+  async findOneByIdWithReservations(id: string) {
+    return await this.hotelRepository.findOne({
+      where: { id },
+      relations: ['reservations'],
+    });
+  }
+
   update(id: string, updateHotelDto: UpdateHotelDto) {
     return this.hotelRepository.update(id, updateHotelDto);
   }
