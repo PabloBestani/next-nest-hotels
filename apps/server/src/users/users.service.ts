@@ -38,6 +38,13 @@ export class UsersService {
     return await this.usersRepository.findOneBy({ email });
   }
 
+  async findOneByEmailWithPassword(email: string): Promise<User | null> {
+    return await this.usersRepository.findOne({
+      where: { email },
+      select: { password: true },
+    });
+  }
+
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
