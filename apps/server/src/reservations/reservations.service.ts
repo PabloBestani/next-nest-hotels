@@ -3,7 +3,7 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { v4 } from 'uuid';
 import { HotelsService } from 'src/hotels/hotels.service';
 import { RoomTypeService } from 'src/room-type/room-type.service';
@@ -25,7 +25,7 @@ export class ReservationsService {
     userEmail,
     roomTypeId,
     hotelId,
-  }: CreateReservationDto) {
+  }: CreateReservationDto): Promise<Reservation> {
     try {
       const hotel = await this.hotelsService.findOneById(hotelId);
       const roomType = await this.roomTypeService.findOne(roomTypeId);
@@ -51,18 +51,21 @@ export class ReservationsService {
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<Reservation[]> {
     return this.reservationsRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<Reservation | null> {
     return this.reservationsRepository.findOne({
       where: { id },
       relations: ['hotel', 'userEmail', 'roomType'],
     });
   }
 
-  async update(id: string, updateReservationDto: UpdateReservationDto) {
+  async update(
+    id: string,
+    updateReservationDto: UpdateReservationDto,
+  ): Promise<Reservation> {
     const reservation = await this.reservationsRepository.findOneBy({ id });
 
     if (!reservation) {
@@ -73,11 +76,14 @@ export class ReservationsService {
     return await this.reservationsRepository.save(reservation);
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<UpdateResult> {
     return this.reservationsRepository.softDelete(id);
   }
 
-  async updateReservation(reservation: Reservation, dto: UpdateReservationDto) {
+  private async updateReservation(
+    reservation: Reservation,
+    dto: UpdateReservationDto,
+  ): Promise<void> {
     const {
       hotelId,
       roomTypeId,

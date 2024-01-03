@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { v4 } from 'uuid';
 import * as bcryptjs from 'bcryptjs';
 
@@ -14,7 +14,7 @@ export class UsersService {
     private readonly usersRepository: Repository<User>,
   ) {}
 
-  async create({ name, email, password, role }: CreateUserDto) {
+  async create({ name, email, password, role }: CreateUserDto): Promise<User> {
     const newUser = this.usersRepository.create({
       id: v4(),
       name,
@@ -26,19 +26,22 @@ export class UsersService {
     return await this.usersRepository.save(newUser);
   }
 
-  async findAll() {
+  async findAll(): Promise<User[]> {
     return await this.usersRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<User | null> {
     return await this.usersRepository.findOneBy({ id });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
     return await this.usersRepository.update(id, updateUserDto);
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<UpdateResult> {
     return await this.usersRepository.softDelete(id);
   }
 }
