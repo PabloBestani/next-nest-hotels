@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from 'src/users/users.service';
+import { RegisterDto } from './dto/register.dto';
+import * as bcryptjs from 'bcryptjs';
+import { User } from 'src/users/entities/user.entity';
+import { LoginDto } from './dto/login.dto';
+import { ActiveUserInterface } from 'src/common/interfaces/active-user.interface';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async register({ name, email, password, role }: RegisterDto): Promise<User> {
+    const user = await this.usersService.findOneByEmail(email);
+    if (user) throw new BadRequestException('Email is not available');
+    return await this.usersService.create({
+      name,
+      email,
+      password,
+      role,
+    });
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async login({ email, password }: LoginDto): Promise<{
+    email: string;
+    token: string;
+  }> {
+    const user = await this.usersService.findOneByEmail(email);
+    if (!user || (await bcryptjs.hash(password, 10)) !== user.password) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const payload: ActiveUserInterface = { email, role: user.role };
+    const token = await this.jwtService.signAsync(payload);
+    return {
+      email,
+      token,
+    };
   }
 }
