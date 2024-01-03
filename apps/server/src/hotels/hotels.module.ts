@@ -9,9 +9,10 @@ import {
 } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { customHotelRepository } from './hotels.repository';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Hotel])],
+  imports: [TypeOrmModule.forFeature([Hotel]), AuthModule],
   controllers: [HotelsController],
   providers: [
     {
