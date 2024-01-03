@@ -89,16 +89,18 @@ export class ReservationsService {
 
     if (hotelId) {
       const hotel = await this.hotelsService.findOneById(hotelId);
-      if (hotel) {
-        reservation.hotel = hotel;
+      if (!hotel) {
+        throw new NotFoundException('Hotel not found');
       }
+      reservation.hotel = hotel;
     }
 
     if (roomTypeId) {
       const roomType = await this.roomTypeService.findOne(roomTypeId);
-      if (roomType) {
-        reservation.roomType = roomType;
+      if (!roomType) {
+        throw new NotFoundException('Room type not found');
       }
+      reservation.roomType = roomType;
     }
 
     if (userEmail) reservation.userEmail = userEmail;
