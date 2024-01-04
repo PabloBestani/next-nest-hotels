@@ -49,7 +49,7 @@ export class UsersService {
     });
   }
 
-  async update(
+  async updateUsingId(
     id: string,
     { name }: UpdateUserDto,
     email: string,
@@ -61,6 +61,16 @@ export class UsersService {
       throw new UnauthorizedException('Admins cannot edit own user info');
     }
 
+    if (name) user.name = name;
+    return await this.usersRepository.save(user);
+  }
+
+  async updateWithoutUsingId(
+    { name }: UpdateUserDto,
+    email: string,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ email });
+    if (!user) throw new NotFoundException('User info not found');
     if (name) user.name = name;
     return await this.usersRepository.save(user);
   }
