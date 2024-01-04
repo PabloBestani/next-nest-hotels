@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 import { HotelsService } from 'src/hotels/hotels.service';
 import { RoomTypeService } from 'src/room-type/room-type.service';
 import { ActiveUserInterface } from 'src/common/interfaces/active-user.interface';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ReservationsService {
@@ -15,6 +16,7 @@ export class ReservationsService {
     @InjectRepository(Reservation)
     private readonly reservationsRepository: Repository<Reservation>,
 
+    private readonly usersService: UsersService,
     private readonly hotelsService: HotelsService,
     private readonly roomTypeService: RoomTypeService,
   ) {}
@@ -30,21 +32,22 @@ export class ReservationsService {
     { email }: ActiveUserInterface,
   ): Promise<Reservation> {
     try {
+      const user = await this.usersService.findOneByEmail(email);
       const hotel = await this.hotelsService.findOneById(hotelId);
       const roomType = await this.roomTypeService.findOne(roomTypeId);
 
-      if (!hotel || !roomType) {
-        throw new Error('Hotel or Room type not found');
-      }
+      if (!user) throw new NotFoundException('User not found');
+      if (!hotel) throw new NotFoundException('Hotel not found');
+      if (!roomType) throw new NotFoundException('Room type not found');
 
       const newReservation = this.reservationsRepository.create({
         id: v4(),
         totalPrice,
         checkInDate,
         checkOutDate,
+        user,
         hotel,
         roomType,
-        userEmail: email,
       });
 
       return await this.reservationsRepository.save(newReservation);
@@ -61,7 +64,7 @@ export class ReservationsService {
   async findOne(id: string): Promise<Reservation | null> {
     return this.reservationsRepository.findOne({
       where: { id },
-      relations: ['hotel', 'userEmail', 'roomType'],
+      relations: ['hotel', 'user', 'roomType'],
     });
   }
 
@@ -71,9 +74,8 @@ export class ReservationsService {
   ): Promise<Reservation> {
     const reservation = await this.reservationsRepository.findOneBy({ id });
 
-    if (!reservation) {
-      throw new NotFoundException('Reservation not found');
-    }
+    if (!reservation) throw new NotFoundException('Reservation not found');
+
     await this.updateReservation(reservation, updateReservationDto);
 
     return await this.reservationsRepository.save(reservation);
@@ -96,23 +98,24 @@ export class ReservationsService {
       totalPrice,
     } = dto;
 
+    if (userEmail) {
+      const user = await this.usersService.findOneByEmail(userEmail);
+      if (!user) throw new NotFoundException('User not found');
+      reservation.user = user;
+    }
+
     if (hotelId) {
       const hotel = await this.hotelsService.findOneById(hotelId);
-      if (!hotel) {
-        throw new NotFoundException('Hotel not found');
-      }
+      if (!hotel) throw new NotFoundException('Hotel not found');
       reservation.hotel = hotel;
     }
 
     if (roomTypeId) {
       const roomType = await this.roomTypeService.findOne(roomTypeId);
-      if (!roomType) {
-        throw new NotFoundException('Room type not found');
-      }
+      if (!roomType) throw new NotFoundException('Room type not found');
       reservation.roomType = roomType;
     }
 
-    if (userEmail) reservation.userEmail = userEmail;
     if (checkInDate) reservation.checkInDate = checkInDate;
     if (checkOutDate) reservation.checkOutDate = checkOutDate;
     if (totalPrice) reservation.totalPrice = totalPrice;

@@ -7,7 +7,6 @@ import {
   Entity,
   PrimaryColumn,
   ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -27,9 +26,8 @@ export class Reservation {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'userEmail', referencedColumnName: 'email' })
-  userEmail: string;
+  @ManyToOne(() => User, (user) => user.email)
+  user: User;
 
   @ManyToOne(() => Hotel, (hotel) => hotel.id)
   hotel: Hotel;

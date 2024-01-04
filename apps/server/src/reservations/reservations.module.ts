@@ -6,6 +6,7 @@ import { Reservation } from './entities/reservation.entity';
 import { HotelsModule } from 'src/hotels/hotels.module';
 import { RoomTypeModule } from 'src/room-type/room-type.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AuthModule } from 'src/auth/auth.module';
     HotelsModule,
     RoomTypeModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [ReservationsController],
   providers: [ReservationsService],
