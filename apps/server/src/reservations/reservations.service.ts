@@ -7,6 +7,7 @@ import { Repository, UpdateResult } from 'typeorm';
 import { v4 } from 'uuid';
 import { HotelsService } from 'src/hotels/hotels.service';
 import { RoomTypeService } from 'src/room-type/room-type.service';
+import { ActiveUserInterface } from 'src/common/interfaces/active-user.interface';
 
 @Injectable()
 export class ReservationsService {
@@ -18,14 +19,16 @@ export class ReservationsService {
     private readonly roomTypeService: RoomTypeService,
   ) {}
 
-  async create({
-    totalPrice,
-    checkInDate,
-    checkOutDate,
-    userEmail,
-    roomTypeId,
-    hotelId,
-  }: CreateReservationDto): Promise<Reservation> {
+  async create(
+    {
+      totalPrice,
+      checkInDate,
+      checkOutDate,
+      roomTypeId,
+      hotelId,
+    }: CreateReservationDto,
+    { email }: ActiveUserInterface,
+  ): Promise<Reservation> {
     try {
       const hotel = await this.hotelsService.findOneById(hotelId);
       const roomType = await this.roomTypeService.findOne(roomTypeId);
@@ -41,7 +44,7 @@ export class ReservationsService {
         checkOutDate,
         hotel,
         roomType,
-        userEmail,
+        userEmail: email,
       });
 
       return await this.reservationsRepository.save(newReservation);

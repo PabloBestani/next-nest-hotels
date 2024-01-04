@@ -12,6 +12,8 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from 'src/common/enums/role.enum';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import { ActiveUserInterface } from 'src/common/interfaces/active-user.interface';
 
 @Controller('reservations')
 export class ReservationsController {
@@ -19,8 +21,11 @@ export class ReservationsController {
 
   @Auth(Role.USER)
   @Post()
-  create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationsService.create(createReservationDto);
+  create(
+    @Body() createReservationDto: CreateReservationDto,
+    @ActiveUser() user: ActiveUserInterface,
+  ) {
+    return this.reservationsService.create(createReservationDto, user);
   }
 
   @Auth(Role.ADMIN)

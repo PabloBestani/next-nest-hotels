@@ -1,7 +1,6 @@
 import {
   IsDateString,
   IsDecimal,
-  IsEmail,
   IsInt,
   IsPositive,
   IsUUID,
@@ -16,9 +15,6 @@ export class CreateReservationDto {
 
   @IsDateString()
   checkOutDate: Date;
-
-  @IsEmail()
-  userEmail: string;
 
   @IsUUID(4)
   hotelId: string;
