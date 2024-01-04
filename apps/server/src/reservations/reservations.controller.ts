@@ -36,8 +36,11 @@ export class ReservationsController {
 
   @Auth(Role.USER)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reservationsService.findOne(id);
+  findOne(
+    @Param('id') id: string,
+    @ActiveUser() { email }: ActiveUserInterface,
+  ) {
+    return this.reservationsService.findOne(id, email);
   }
 
   @Auth(Role.ADMIN)

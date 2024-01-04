@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -61,11 +65,15 @@ export class ReservationsService {
     return this.reservationsRepository.find();
   }
 
-  async findOne(id: string): Promise<Reservation | null> {
-    return this.reservationsRepository.findOne({
+  async findOne(id: string, email: string): Promise<Reservation | null> {
+    const reservation = await this.reservationsRepository.findOne({
       where: { id },
       relations: ['hotel', 'user', 'roomType'],
     });
+
+    if (!reservation) throw new NotFoundException('Reservation not found');
+    if (reservation.user.email !== email) throw new UnauthorizedException();
+    return reservation;
   }
 
   async update(
