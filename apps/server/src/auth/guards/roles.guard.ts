@@ -11,7 +11,7 @@ export class RolesGuard implements CanActivate {
   // Funcion que permite o prohibe el acceso
   canActivate(context: ExecutionContext): boolean {
     // Extraigo de la metadata el rol requerido
-    const requiredRole = this.reflector.getAllAndOverride(ROLE_KEY, [
+    const requiredRole = this.reflector.getAllAndOverride<Role>(ROLE_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
