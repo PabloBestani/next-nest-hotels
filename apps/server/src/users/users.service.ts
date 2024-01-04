@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -47,12 +51,27 @@ export class UsersService {
 
   async update(
     id: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
-    return await this.usersRepository.update(id, updateUserDto);
+    { name }: UpdateUserDto,
+    email: string,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (!user) throw new NotFoundException('User not found');
+    if (user.email === email) {
+      throw new UnauthorizedException('Admins cannot edit own user info');
+    }
+
+    if (name) user.name = name;
+    return await this.usersRepository.save(user);
   }
 
-  async remove(id: string): Promise<UpdateResult> {
+  async remove(id: string, email: string): Promise<UpdateResult> {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException('User not found');
+    if (user.email === email) {
+      throw new UnauthorizedException('Admins cannot delet own user');
+    }
+
     return await this.usersRepository.softDelete(id);
   }
 }
